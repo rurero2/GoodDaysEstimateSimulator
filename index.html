@@ -130,14 +130,15 @@
     </div>
 
     <div class="triangle-arrow"></div>
-    <div id="process-section" style="display:none;margin:24px auto 0 auto;max-width:600px;background:#f8fcfd;border:1px solid #b3d6ee;border-radius:8px;padding:20px;color:#333;font-size:1rem;line-height:1.7;"></div>
+    
     <div class="result-section">
         <h3>概算見積もり総額 (目安)</h3>
         <p class="total-amount" id="total-result">0万円</p>
         <p style="font-size: 0.9rem; color: #666;">※ この金額は概算であり、実際の費用とは異なる場合があります。</p>
         <button id="toggle-process" style="display:block;margin:24px auto 0 auto;padding:10px 24px;font-size:1rem;background:#026fb8;color:#fff;border:none;border-radius:6px;cursor:pointer;">計算過程を表示</button>
+        </div>
         <div id="process-section" style="display:none;margin:16px auto 0 auto;max-width:600px;background:#f8fcfd;border:1px solid #b3d6ee;border-radius:8px;padding:20px;color:#333;font-size:1rem;line-height:1.7;"></div>
-    </div>
+    
 
 </div>
 
@@ -163,17 +164,17 @@ window.addEventListener('DOMContentLoaded', function() {
         const loanFee = Math.floor(loanAmount * 0.01);
         const ageFee = buildingAge * 1;
         const total = price + otherFees + loanFee + ageFee;
-        processSection.innerHTML = `
-            <b>計算式:</b><br>
-            物件価格 + その他費用 + (ローン借入額 × 1%) + (築年数 × 1万円)<br><br>
-            <b>内訳:</b><br>
-            物件価格: <span style="color:#026fb8;">${price.toLocaleString()}万円</span><br>
-            その他費用: <span style="color:#026fb8;">${otherFees.toLocaleString()}万円</span><br>
-            ローン手数料(1%): <span style="color:#026fb8;">${loanFee.toLocaleString()}万円</span><br>
-            築年数加算: <span style="color:#026fb8;">${ageFee.toLocaleString()}万円</span><br>
-            <hr style="margin:16px 0;">
-            <b>合計: <span style="color:#4bb6ad;font-size:1.3em;">${total.toLocaleString()}万円</span></b>
-        `;
+            processSection.innerHTML = `
+                <b>計算式:</b><br>
+                <span style="margin-left:1em;">物件価格 + その他費用 + (ローン借入額 × 1%) + (築年数 × 1万円)</span><br><br>
+                <b>内訳:</b><br>
+                <span style="margin-left:1em;">物件価格:</span> <span style="color:#026fb8;">${price.toLocaleString()}万円</span><br>
+                <span style="margin-left:1em;">その他費用:</span> <span style="color:#026fb8;">${otherFees.toLocaleString()}万円</span><br>
+                <span style="margin-left:1em;">ローン手数料(1%):</span> <span style="color:#026fb8;">${loanFee.toLocaleString()}万円</span><br>
+                <span style="margin-left:1em;">築年数加算:</span> <span style="color:#026fb8;">${ageFee.toLocaleString()}万円</span><br>
+                <hr style="margin:16px 0;">
+                <b><span style="margin-left:1em;">合計:</span> <span style="color:#4bb6ad;font-size:1.3em;">${total.toLocaleString()}万円</span></b>
+            `;
     }
     ['price','building-age','loan-amount','other-fees'].forEach(id => {
         document.getElementById(id).addEventListener('input', () => {
