@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>不動産見積もりシミュレーター</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+            background-color: #f5f6f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #026fb8;
+            margin-bottom: 30px;
+        }
+        .step {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #b3d6ee;
+            border-radius: 8px;
+            background-color: #f3f8fc;
+        }
+        .step h2 {
+            font-size: 1.2rem;
+            color: #026fb8;
+            border-left: 4px solid #026fb8;
+            padding-left: 10px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            justify-content: space-between;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 0;
+            min-width: 130px;
+            font-size: 1.1rem;
+            text-align: left;
+            padding-left: 32px;
+        }
+        .form-group input {
+            width: 100%;
+            max-width: 400px;
+            font-size: 1.3rem;
+            padding: 18px 14px;
+            border: 1px solid #b3d6ee;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: block;
+            text-align: right;
+        }
+        .estimate-input {
+            /* 右余白は不要 */
+        }
+        .triangle-arrow {
+            width: 0px;
+            height: 0;
+            margin: 32px auto 0 auto;
+            border-left: 80px solid transparent;
+            border-right: 80px solid transparent;
+            border-top: 50px solid #a7e2e3;
+        }
+        .result-section {
+            text-align: center;
+            margin-top: 30px;
+            padding: 30px;
+            background-color: #e3f1fa;
+            border: 1px solid #026fb8;
+            border-radius: 8px;
+        }
+        .result-section h3 {
+            font-size: 1.5rem;
+            color: #026fb8;
+            margin-top: 0;
+        }
+        .total-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4bb6ad;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>不動産見積もりシミュレーター</h1>
+    <p style="text-align: center; color: #666;">不動産取引にかかる概算費用を計算します。</p>
+
+    <div class="step">
+        <h2>物件情報</h2>
+        <div class="form-group">
+            <label for="price">物件価格 (万円)</label>
+            <input type="number" id="price" placeholder="例: 3000" min="0" class="estimate-input">
+        </div>
+        <div class="form-group">
+            <label for="building-age">築年数 (年)</label>
+            <input type="number" id="building-age" placeholder="例: 5" min="0" class="estimate-input">
+        </div>
+    </div>
+
+    <div class="step">
+        <h2>諸費用</h2>
+        <div class="form-group">
+            <label for="loan-amount">住宅ローン借入額 (万円)</label>
+            <input type="number" id="loan-amount" placeholder="例: 2500" min="0" class="estimate-input">
+        </div>
+        <div class="form-group">
+            <label for="other-fees">その他費用 (万円)</label>
+            <input type="number" id="other-fees" placeholder="例: 50" min="0" class="estimate-input">
+        </div>
+    </div>
+
+    <div class="triangle-arrow"></div>
+    <div id="process-section" style="display:none;margin:24px auto 0 auto;max-width:600px;background:#f8fcfd;border:1px solid #b3d6ee;border-radius:8px;padding:20px;color:#333;font-size:1rem;line-height:1.7;"></div>
+    <div class="result-section">
+        <h3>概算見積もり総額 (目安)</h3>
+        <p class="total-amount" id="total-result">0万円</p>
+        <p style="font-size: 0.9rem; color: #666;">※ この金額は概算であり、実際の費用とは異なる場合があります。</p>
+        <button id="toggle-process" style="display:block;margin:24px auto 0 auto;padding:10px 24px;font-size:1rem;background:#026fb8;color:#fff;border:none;border-radius:6px;cursor:pointer;">計算過程を表示</button>
+        <div id="process-section" style="display:none;margin:16px auto 0 auto;max-width:600px;background:#f8fcfd;border:1px solid #b3d6ee;border-radius:8px;padding:20px;color:#333;font-size:1rem;line-height:1.7;"></div>
+    </div>
+
+</div>
+
+</body>
+<script src="logic.js"></script>
+<script>
+// 計算過程の開閉と内容表示
+window.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('toggle-process');
+    const processSection = document.getElementById('process-section');
+    let processOpen = false;
+    toggleBtn.addEventListener('click', function() {
+        processOpen = !processOpen;
+        processSection.style.display = processOpen ? 'block' : 'none';
+        toggleBtn.textContent = processOpen ? '計算過程を隠す' : '計算過程を表示';
+        if(processOpen) showProcess();
+    });
+    function showProcess() {
+        const price = parseInt(document.getElementById('price').value, 10) || 0;
+        const buildingAge = parseInt(document.getElementById('building-age').value, 10) || 0;
+        const loanAmount = parseInt(document.getElementById('loan-amount').value, 10) || 0;
+        const otherFees = parseInt(document.getElementById('other-fees').value, 10) || 0;
+        const loanFee = Math.floor(loanAmount * 0.01);
+        const ageFee = buildingAge * 1;
+        const total = price + otherFees + loanFee + ageFee;
+        processSection.innerHTML = `
+            <b>計算式:</b><br>
+            物件価格 + その他費用 + (ローン借入額 × 1%) + (築年数 × 1万円)<br><br>
+            <b>内訳:</b><br>
+            物件価格: <span style="color:#026fb8;">${price.toLocaleString()}万円</span><br>
+            その他費用: <span style="color:#026fb8;">${otherFees.toLocaleString()}万円</span><br>
+            ローン手数料(1%): <span style="color:#026fb8;">${loanFee.toLocaleString()}万円</span><br>
+            築年数加算: <span style="color:#026fb8;">${ageFee.toLocaleString()}万円</span><br>
+            <hr style="margin:16px 0;">
+            <b>合計: <span style="color:#4bb6ad;font-size:1.3em;">${total.toLocaleString()}万円</span></b>
+        `;
+    }
+    ['price','building-age','loan-amount','other-fees'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+            if(processOpen) showProcess();
+        });
+    });
+});
+</script>
+</html>
